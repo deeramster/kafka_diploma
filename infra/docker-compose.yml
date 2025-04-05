@@ -236,28 +236,6 @@ services:
     networks:
       - kafka-replica-net
 
-  mirrormaker:
-    image: bitnami/kafka:latest
-    container_name: mirrormaker
-    hostname: mirrormaker
-    environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-    volumes:
-      - ./config/mirrormaker.properties:/opt/bitnami/kafka/config/mirrormaker.properties
-      - ./secrets/mirrormaker/kafka.mirrormaker.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
-      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
-    depends_on:
-      - zookeeper
-      - broker1
-      - broker2
-      - broker3
-      - replica-broker1
-      - replica-broker2
-      - replica-broker3
-    networks:
-      - kafka-net
-      - kafka-replica-net
-
   kafka-ui:
     image: provectuslabs/kafka-ui:v0.7.0
     container_name: kafka-ui

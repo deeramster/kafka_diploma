@@ -116,6 +116,9 @@ docker exec ${TARGET_BROKER} kafka-acls.sh --add --allow-principal "${MIRRORMAKE
 
 echo "Permissions configured."
 
+
+sleep 30
+
 echo "Source topic list:"
 docker exec ${SOURCE_BROKER} kafka-topics.sh --list --bootstrap-server ${BOOTSTRAP_SERVER_SOURCE} --command-config ${COMMAND_CONFIG}
 

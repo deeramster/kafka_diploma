@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Генерация CA (Certificate Authority)
 openssl req -new -x509 -keyout secrets/ca/ca-key -out secrets/ca/ca-cert -days 365 -subj '/CN=ca.kafka.ssl/OU=Test/O=Company/L=City/ST=State/C=RU' -passin pass:test1234 -passout pass:test1234
 
@@ -52,22 +51,4 @@ openssl x509 -req -CA secrets/ca/ca-cert -CAkey secrets/ca/ca-key -in secrets/cl
 keytool -keystore secrets/client/kafka.client.keystore.jks -alias CARoot -import -file secrets/ca/ca-cert -storepass test1234 -keypass test1234 -noprompt
 keytool -keystore secrets/client/kafka.client.keystore.jks -alias client -import -file secrets/client/client-signed-cert -storepass test1234 -keypass test1234 -noprompt
 
-# Генерация Keystore для MirrorMaker
-keytool -keystore secrets/mirrormaker/kafka.mirrormaker.keystore.jks -alias mirrormaker -validity 365 -genkey -keyalg RSA -storepass test1234 -keypass test1234 -dname "CN=mirrormaker.kafka.ssl, OU=MirrorMaker, O=Company, L=City, ST=State, C=RU"
-
-# Создание Truststore для MirrorMaker (импорт CA Certificate)
-# Предполагается, что у вас уже есть ca-cert в secrets/ca/ca-cert
-keytool -keystore secrets/mirrormaker/kafka.mirrormaker.truststore.jks -alias CARoot -import -file secrets/ca/ca-cert -storepass test1234 -keypass test1234 -noprompt
-
-# Генерация запроса на подписание сертификата (CSR) для MirrorMaker
-keytool -keystore secrets/mirrormaker/kafka.mirrormaker.keystore.jks -alias mirrormaker -certreq -file secrets/mirrormaker/mirrormaker.csr -storepass test1234 -keypass test1234
-
-# Подписание CSR MirrorMaker (с использованием OpenSSL)
-openssl x509 -req -CA secrets/ca/ca-cert -CAkey secrets/ca/ca-key -in secrets/mirrormaker/mirrormaker.csr -out secrets/mirrormaker/mirrormaker-signed-cert -days 365 -CAcreateserial -passin pass:test1234
-
-# Импорт подписанного сертификата в Keystore MirrorMaker
-keytool -keystore secrets/mirrormaker/kafka.mirrormaker.keystore.jks -alias CARoot -import -file secrets/ca/ca-cert -storepass test1234 -keypass test1234 -noprompt
-keytool -keystore secrets/mirrormaker/kafka.mirrormaker.keystore.jks -alias mirrormaker -import -file secrets/mirrormaker/mirrormaker-signed-cert -storepass test1234 -keypass test1234 -noprompt
-
-
-echo "Сертификаты и хранилища ключей успешно созданы."
+echo "Сертификаты и хранилища ключей для main кластера успешно созданы."
