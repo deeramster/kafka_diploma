@@ -1,0 +1,315 @@
+version: "3"
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - kafka-net
+
+  broker1:
+    image: bitnami/kafka:latest
+    container_name: broker1
+    hostname: broker1
+    ports:
+      - "9093:9093"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=SSL://broker1:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=SSL://broker1:9093
+      - KAFKA_SSL_KEYSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.broker1.keystore.jks
+      - KAFKA_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_SSL_KEY_PASSWORD=test1234
+      - KAFKA_SSL_TRUSTSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.truststore.jks
+      - KAFKA_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_SSL_CLIENT_AUTH=required
+      - KAFKA_INTER_BROKER_LISTENER_NAME=SSL
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=SSL:SSL
+      - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.authorizer.AclAuthorizer
+      - KAFKA_SUPER_USERS=User:CN=broker1.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=broker2.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=broker3.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=client.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU
+      - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - ./secrets/broker1/kafka.broker1.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.broker1.keystore.jks:ro
+      - ./secrets/broker1/kafka.broker1.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
+      - ./secrets/client/kafka.client.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.client.keystore.jks:ro
+      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
+      - ./config/server-broker1.properties:/opt/bitnami/kafka/config/server.properties
+      - ./config/client-ssl.properties:/opt/bitnami/kafka/config/certs/client-ssl.properties
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-net
+
+  broker2:
+    image: bitnami/kafka:latest
+    container_name: broker2
+    hostname: broker2
+    ports:
+      - "9094:9093"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_BROKER_ID=2
+      - KAFKA_CFG_LISTENERS=SSL://broker2:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=SSL://broker2:9093
+      - KAFKA_SSL_KEYSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.broker2.keystore.jks
+      - KAFKA_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_SSL_KEY_PASSWORD=test1234
+      - KAFKA_SSL_TRUSTSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.truststore.jks
+      - KAFKA_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_SSL_CLIENT_AUTH=required
+      - KAFKA_INTER_BROKER_LISTENER_NAME=SSL
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=SSL:SSL
+      - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.authorizer.AclAuthorizer
+      - KAFKA_SUPER_USERS=User:CN=broker1.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=broker2.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=broker3.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=client.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU
+      - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - ./secrets/broker2/kafka.broker2.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.broker2.keystore.jks:ro
+      - ./secrets/broker2/kafka.broker2.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
+      - ./secrets/client/kafka.client.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.client.keystore.jks:ro
+      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
+      - ./config/server-broker2.properties:/opt/bitnami/kafka/config/server.properties
+      - ./config/client-ssl.properties:/opt/bitnami/kafka/config/certs/client-ssl.properties
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-net
+
+  broker3:
+    image: bitnami/kafka:latest
+    container_name: broker3
+    hostname: broker3
+    ports:
+      - "9095:9093"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_BROKER_ID=3
+      - KAFKA_CFG_LISTENERS=SSL://broker3:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=SSL://broker3:9093
+      - KAFKA_SSL_KEYSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.broker3.keystore.jks
+      - KAFKA_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_SSL_KEY_PASSWORD=test1234
+      - KAFKA_SSL_TRUSTSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.truststore.jks
+      - KAFKA_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_SSL_CLIENT_AUTH=required
+      - KAFKA_INTER_BROKER_LISTENER_NAME=SSL
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=SSL:SSL
+      - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.authorizer.AclAuthorizer
+      - KAFKA_SUPER_USERS=User:CN=broker1.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=broker2.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=broker3.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=client.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU
+      - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+    volumes:
+      - ./secrets/broker3/kafka.broker3.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.broker3.keystore.jks:ro
+      - ./secrets/broker3/kafka.broker3.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
+      - ./secrets/client/kafka.client.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.client.keystore.jks:ro
+      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
+      - ./config/server-broker3.properties:/opt/bitnami/kafka/config/server.properties
+      - ./config/client-ssl.properties:/opt/bitnami/kafka/config/certs/client-ssl.properties
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-net
+
+  zookeeper-replica:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper-replica
+    hostname: zookeeper-replica
+    ports:
+      - "2182:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - kafka-replica-net
+
+  replica-broker1:
+    image: bitnami/kafka:latest
+    container_name: replica-broker1
+    hostname: replica-broker1
+    ports:
+      - "9096:9093"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-replica:2181
+      - KAFKA_BROKER_ID=4
+      - KAFKA_CFG_LISTENERS=SSL://replica-broker1:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=SSL://replica-broker1:9093
+      - KAFKA_SSL_KEYSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.replica-broker1.keystore.jks
+      - KAFKA_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_SSL_KEY_PASSWORD=test1234
+      - KAFKA_SSL_TRUSTSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.truststore.jks
+      - KAFKA_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_SSL_CLIENT_AUTH=required
+      - KAFKA_INTER_BROKER_LISTENER_NAME=SSL
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=SSL:SSL
+      - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.authorizer.AclAuthorizer
+      - KAFKA_SUPER_USERS=User:CN=replica-broker1.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=replica-broker2.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=replica-broker3.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=client.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU
+      - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_REPLICA_SELECTOR_CLASS=org.apache.kafka.common.replica.RackAwareReplicaSelector
+    volumes:
+      - ./secrets/replica-broker1/kafka.replica-broker1.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.replica-broker1.keystore.jks:ro
+      - ./secrets/replica-broker1/kafka.replica-broker1.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
+      - ./secrets/client/kafka.client.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.client.keystore.jks:ro
+      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
+      - ./config/server-replica-broker1.properties:/opt/bitnami/kafka/config/server.properties
+      - ./config/client-ssl.properties:/opt/bitnami/kafka/config/certs/client-ssl.properties
+    depends_on:
+      - zookeeper-replica
+    networks:
+      - kafka-replica-net
+
+  replica-broker2:
+    image: bitnami/kafka:latest
+    container_name: replica-broker2
+    hostname: replica-broker2
+    ports:
+      - "9097:9093"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-replica:2181
+      - KAFKA_BROKER_ID=5
+      - KAFKA_CFG_LISTENERS=SSL://replica-broker2:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=SSL://replica-broker2:9093
+      - KAFKA_SSL_KEYSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.replica-broker2.keystore.jks
+      - KAFKA_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_SSL_KEY_PASSWORD=test1234
+      - KAFKA_SSL_TRUSTSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.truststore.jks
+      - KAFKA_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_SSL_CLIENT_AUTH=required
+      - KAFKA_INTER_BROKER_LISTENER_NAME=SSL
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=SSL:SSL
+      - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.authorizer.AclAuthorizer
+      - KAFKA_SUPER_USERS=User:CN=replica-broker1.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=replica-broker2.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=replica-broker3.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=client.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU
+      - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_REPLICA_SELECTOR_CLASS=org.apache.kafka.common.replica.RackAwareReplicaSelector
+    volumes:
+      - ./secrets/replica-broker2/kafka.replica-broker2.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.replica-broker2.keystore.jks:ro
+      - ./secrets/replica-broker2/kafka.replica-broker2.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
+      - ./secrets/client/kafka.client.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.client.keystore.jks:ro
+      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
+      - ./config/server-replica-broker2.properties:/opt/bitnami/kafka/config/server.properties
+      - ./config/client-ssl.properties:/opt/bitnami/kafka/config/certs/client-ssl.properties
+    depends_on:
+      - zookeeper-replica
+    networks:
+      - kafka-replica-net
+
+  replica-broker3:
+    image: bitnami/kafka:latest
+    container_name: replica-broker3
+    hostname: replica-broker3
+    ports:
+      - "9098:9093"
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-replica:2181
+      - KAFKA_BROKER_ID=6
+      - KAFKA_CFG_LISTENERS=SSL://replica-broker3:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=SSL://replica-broker3:9093
+      - KAFKA_SSL_KEYSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.replica-broker3.keystore.jks
+      - KAFKA_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_SSL_KEY_PASSWORD=test1234
+      - KAFKA_SSL_TRUSTSTORE_LOCATION=/opt/bitnami/kafka/config/certs/kafka.truststore.jks
+      - KAFKA_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_SSL_CLIENT_AUTH=required
+      - KAFKA_INTER_BROKER_LISTENER_NAME=SSL
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=SSL:SSL
+      - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.authorizer.AclAuthorizer
+      - KAFKA_SUPER_USERS=User:CN=replica-broker1.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=replica-broker2.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=replica-broker3.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU;User:CN=client.kafka.ssl,OU=Test,O=Company,L=City,ST=State,C=RU
+      - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_REPLICA_SELECTOR_CLASS=org.apache.kafka.common.replica.RackAwareReplicaSelector
+    volumes:
+      - ./secrets/replica-broker3/kafka.replica-broker3.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.replica-broker3.keystore.jks:ro
+      - ./secrets/replica-broker3/kafka.replica-broker3.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
+      - ./secrets/client/kafka.client.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.client.keystore.jks:ro
+      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
+      - ./config/server-replica-broker3.properties:/opt/bitnami/kafka/config/server.properties
+      - ./config/client-ssl.properties:/opt/bitnami/kafka/config/certs/client-ssl.properties
+    depends_on:
+      - zookeeper-replica
+    networks:
+      - kafka-replica-net
+
+  mirrormaker:
+    image: bitnami/kafka:latest
+    container_name: mirrormaker
+    hostname: mirrormaker
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+    volumes:
+      - ./config/mirrormaker.properties:/opt/bitnami/kafka/config/mirrormaker.properties
+      - ./secrets/mirrormaker/kafka.mirrormaker.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro
+      - ./secrets/mirrormaker/kafka.mirrormaker.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.mirrormaker.keystore.jks:ro
+    depends_on:
+      - zookeeper
+      - broker1
+      - broker2
+      - broker3
+      - replica-broker1
+      - replica-broker2
+      - replica-broker3
+    networks:
+      - kafka-net
+      - kafka-replica-net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.0
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      # Primary Cluster
+      - KAFKA_CLUSTERS_0_NAME=Primary
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=broker1:9093,broker2:9093,broker3:9093
+      - KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=SSL
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENABLED=true
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_CLIENT_AUTH=required
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION=/truststore/kafka.truststore.jks
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION=/keystore/kafka.client.keystore.jks
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEY_PASSWORD=test1234
+      - KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+
+      # Replica Cluster
+      - KAFKA_CLUSTERS_1_NAME=Replica
+      - KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS=replica-broker1:9093,replica-broker2:9093,replica-broker3:9093
+      - KAFKA_CLUSTERS_1_PROPERTIES_SECURITY_PROTOCOL=SSL
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_ENABLED=true
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_CLIENT_AUTH=required
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_TRUSTSTORE_LOCATION=/truststore/kafka.truststore.jks
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_TRUSTSTORE_PASSWORD=test1234
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_KEYSTORE_LOCATION=/keystore/kafka.client.keystore.jks
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_KEYSTORE_PASSWORD=test1234
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_KEY_PASSWORD=test1234
+      - KAFKA_CLUSTERS_1_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+
+      # UI Settings
+      - SERVER_SERVLET_SECURITY_USER_ROLE=ADMIN
+      - SERVER_SERVLET_SECURITY_USER_NAME=admin
+      - SERVER_SERVLET_SECURITY_USER_PASSWORD=admin
+    volumes:
+      - ./secrets/client/kafka.client.keystore.jks:/keystore/kafka.client.keystore.jks:ro
+      - ./secrets/client/kafka.client.truststore.jks:/truststore/kafka.truststore.jks:ro
+    depends_on:
+      - broker1
+      - broker2
+      - broker3
+      - replica-broker1
+      - replica-broker2
+      - replica-broker3
+    networks:
+      - kafka-net
+      - kafka-replica-net
+
+networks:
+  kafka-replica-net:
+    driver: bridge
+  kafka-net:
+    driver: bridge
